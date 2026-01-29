@@ -51,29 +51,62 @@ function LoginInner() {
       <div className="mx-auto w-full max-w-md rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
         <h1 className="text-xl font-semibold">Twenty10 (Dev)</h1>
         <p className="mt-1 text-sm text-zinc-600">
-          Sign in with email/password against the Firebase Auth emulator.
+          Sign in against the Firebase Auth emulator.
         </p>
 
-        <div className="mt-6 flex gap-2">
+        <div className="mt-6">
           <button
-            className={`rounded-lg px-3 py-2 text-sm ${
-              mode === "signin" ? "bg-zinc-900 text-white" : "bg-zinc-100"
-            }`}
-            onClick={() => setMode("signin")}
+            className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-50 disabled:opacity-50"
+            onClick={async () => {
+              setError(null);
+              setLoading(true);
+              try {
+                await firebaseAuthAdapter.signInWithGoogle();
+                router.replace(nextPath);
+              } catch (e: unknown) {
+                setError(toErrorMessage(e));
+              } finally {
+                setLoading(false);
+              }
+            }}
+            disabled={loading}
             type="button"
           >
-            Sign in
+            Continue with Google
           </button>
-          <button
-            className={`rounded-lg px-3 py-2 text-sm ${
-              mode === "signup" ? "bg-zinc-900 text-white" : "bg-zinc-100"
-            }`}
-            onClick={() => setMode("signup")}
-            type="button"
-          >
-            Sign up
-          </button>
+
+          <div className="my-4 flex items-center gap-3">
+            <div className="h-px flex-1 bg-zinc-200" />
+            <div className="text-xs text-zinc-500">or</div>
+            <div className="h-px flex-1 bg-zinc-200" />
+          </div>
+
+          <div className="flex gap-2">
+            <button
+              className={`rounded-lg px-3 py-2 text-sm ${
+                mode === "signin" ? "bg-zinc-900 text-white" : "bg-zinc-100"
+              }`}
+              onClick={() => setMode("signin")}
+              type="button"
+            >
+              Sign in
+            </button>
+            <button
+              className={`rounded-lg px-3 py-2 text-sm ${
+                mode === "signup" ? "bg-zinc-900 text-white" : "bg-zinc-100"
+              }`}
+              onClick={() => setMode("signup")}
+              type="button"
+            >
+              Sign up
+            </button>
+          </div>
         </div>
+
+        <p className="mt-3 text-xs text-zinc-500">
+          Note: Google sign-in should work in emulators, but email/password is the most
+          reliable fallback for local dev.
+        </p>
 
         <label className="mt-4 block text-sm font-medium">Email</label>
         <input
