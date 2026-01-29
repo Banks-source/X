@@ -1,0 +1,12 @@
+{
+  "name": "twenty10-monorepo",
+  "private": true,
+  "workspaces": [
+    "twenty10"
+  ],
+  "scripts": {
+    "dev": "npm --workspace twenty10 run dev",
+    "build": "npm --workspace twenty10 run build",
+    "lint": "npm --workspace twenty10 run lint"
+  }
+}
