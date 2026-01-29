@@ -6,7 +6,10 @@
   ],
   "scripts": {
     "dev": "npm --workspace twenty10 run dev",
+    "dev:emulators": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=1 npm --workspace twenty10 run dev",
     "build": "npm --workspace twenty10 run build",
-    "lint": "npm --workspace twenty10 run lint"
+    "lint": "npm --workspace twenty10 run lint",
+    "emulators": "npx firebase emulators:start --project demo-twenty10 --only auth,firestore",
+    "emulators:ui": "npx firebase emulators:start --project demo-twenty10"
   }
 }
