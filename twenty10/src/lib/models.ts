@@ -19,6 +19,19 @@ export type Strategy = {
   updatedAt?: unknown;
 };
 
+export type ResearchItem = {
+  id: string;
+  title: string;
+  url?: string;
+  notes?: string;
+  tags: string[];
+  strategyIds: string[];
+  assetIds: string[];
+  userId?: string;
+  createdAt?: unknown;
+  updatedAt?: unknown;
+};
+
 export function validateBuckets(buckets: AllocationBucket[]) {
   const errors: string[] = [];
 
@@ -27,7 +40,8 @@ export function validateBuckets(buckets: AllocationBucket[]) {
   let sum = 0;
   for (const b of buckets) {
     if (!b.name.trim()) errors.push("Bucket name cannot be empty.");
-    if (!Number.isFinite(b.percent)) errors.push(`Bucket percent must be a number (${b.name || b.id}).`);
+    if (!Number.isFinite(b.percent))
+      errors.push(`Bucket percent must be a number (${b.name || b.id}).`);
     if (b.percent < 0) errors.push(`Bucket percent cannot be negative (${b.name || b.id}).`);
     sum += b.percent;
   }
