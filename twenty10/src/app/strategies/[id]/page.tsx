@@ -115,13 +115,21 @@ function StrategyDetailInner() {
             <h1 className="mt-2 truncate text-2xl font-semibold">Edit strategy</h1>
           </div>
 
-          <button
-            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
-            onClick={saveAll}
-            disabled={saving || !name.trim() || !validation.ok}
-          >
-            {saving ? "Saving…" : "Save"}
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm"
+              href={`/research?strategyId=${encodeURIComponent(id)}`}
+            >
+              Research
+            </Link>
+            <button
+              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+              onClick={saveAll}
+              disabled={saving || !name.trim() || !validation.ok}
+            >
+              {saving ? "Saving…" : "Save"}
+            </button>
+          </div>
         </header>
 
         {error ? (
@@ -255,9 +263,7 @@ function StrategyDetailInner() {
                     <td className="py-2 pr-2">
                       <button
                         className="rounded-lg bg-zinc-100 px-3 py-2"
-                        onClick={() =>
-                          setBuckets((prev) => prev.filter((x) => x.id !== b.id))
-                        }
+                        onClick={() => setBuckets((prev) => prev.filter((x) => x.id !== b.id))}
                         type="button"
                       >
                         Remove

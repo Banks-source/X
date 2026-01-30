@@ -6,11 +6,7 @@ import { firebaseAuthAdapter } from "@/lib/auth/auth";
 import { useAuthUser } from "@/lib/auth/useAuthUser";
 import { RequireAuth } from "@/lib/ui/RequireAuth";
 import { toErrorMessage } from "@/lib/errors";
-import {
-  createStrategy,
-  deleteStrategy,
-  subscribeStrategies,
-} from "@/lib/strategies";
+import { createStrategy, deleteStrategy, subscribeStrategies } from "@/lib/strategies";
 import { Strategy, StrategyType } from "@/lib/models";
 
 export default function StrategiesPage() {
@@ -75,13 +71,21 @@ function StrategiesInner() {
               Signed in as <span className="font-medium">{user?.email}</span>
             </p>
           </div>
-          <button
-            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white"
-            onClick={() => firebaseAuthAdapter.signOut()}
-            type="button"
-          >
-            Sign out
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm"
+              href="/research"
+            >
+              Research
+            </Link>
+            <button
+              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white"
+              onClick={() => firebaseAuthAdapter.signOut()}
+              type="button"
+            >
+              Sign out
+            </button>
+          </div>
         </header>
 
         {error ? (
