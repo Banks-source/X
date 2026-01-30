@@ -7,7 +7,6 @@ import { RequireAuth } from "@/lib/ui/RequireAuth";
 import { toErrorMessage } from "@/lib/errors";
 import {
   Asset,
-  AssetCategory,
   Holding,
   createWeeklyReport,
   subscribeAssets,
@@ -15,6 +14,7 @@ import {
   subscribeWeeklyReports,
   WeeklyReport,
 } from "@/lib/portfolio";
+import { computeNetWorthByCategory } from "@/lib/netWorth";
 
 function todayISO() {
   const d = new Date();
@@ -22,39 +22,6 @@ function todayISO() {
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd}`;
-}
-
-function latestHoldingsByAsset(holdings: Holding[]): Map<string, Holding> {
-  const m = new Map<string, Holding>();
-  for (const h of holdings) {
-    const prev = m.get(h.assetId);
-    if (!prev || (h.asOf || "") > (prev.asOf || "")) {
-      m.set(h.assetId, h);
-    }
-  }
-  return m;
-}
-
-function computeNetWorth(assets: Asset[], holdings: Holding[]) {
-  const latest = latestHoldingsByAsset(holdings);
-  const catByAsset = new Map<string, AssetCategory>();
-  for (const a of assets) catByAsset.set(a.id, a.category);
-
-  const breakdown: Record<AssetCategory, number> = {
-    property: 0,
-    cash: 0,
-    brokerage: 0,
-    crypto: 0,
-    other: 0,
-  };
-
-  for (const h of latest.values()) {
-    const cat = catByAsset.get(h.assetId) ?? "other";
-    breakdown[cat] += Number(h.value) || 0;
-  }
-
-  const total = Object.values(breakdown).reduce((a, b) => a + b, 0);
-  return { total, breakdown };
 }
 
 export default function ReportsPage() {
@@ -89,7 +56,7 @@ function ReportsInner() {
     [strategyId],
   );
 
-  const nw = useMemo(() => computeNetWorth(assets, holdings), [assets, holdings]);
+  const nw = useMemo(() => computeNetWorthByCategory(assets, holdings), [assets, holdings]);
 
   async function onGenerate() {
     setError(null);
