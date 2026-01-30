@@ -49,9 +49,9 @@ function LoginInner() {
   return (
     <div className="min-h-screen bg-zinc-50 p-6 text-zinc-900">
       <div className="mx-auto w-full max-w-md rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <h1 className="text-xl font-semibold">Twenty10 (Dev)</h1>
+        <h1 className="text-xl font-semibold">Twenty10</h1>
         <p className="mt-1 text-sm text-zinc-600">
-          Sign in against the Firebase Auth emulator.
+          Sign in with Firebase.
         </p>
 
         <div className="mt-6">
@@ -104,8 +104,7 @@ function LoginInner() {
         </div>
 
         <p className="mt-3 text-xs text-zinc-500">
-          Note: Google sign-in should work in emulators, but email/password is the most
-          reliable fallback for local dev.
+          Tip: if Google sign-in fails, use email/password.
         </p>
 
         <label className="mt-4 block text-sm font-medium">Email</label>

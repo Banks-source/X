@@ -27,13 +27,19 @@ function getEnv(name: string, fallback?: string) {
 export function getFirebaseApp(): FirebaseApp {
   if (_app) return _app;
 
-  const projectId = getEnv("NEXT_PUBLIC_FIREBASE_PROJECT_ID", "demo-twenty10");
+  // Defaults are set to the real prod project so App Hosting works even if env injection is flaky.
+  // (These values are public by design; Firebase client keys are not secrets.)
+  const projectId = getEnv("NEXT_PUBLIC_FIREBASE_PROJECT_ID", "twenty10-51ec4");
 
-  // These values are required by Firebase client initialization.
-  // When running against emulators, they do not need to correspond to a real project.
   const config = {
-    apiKey: getEnv("NEXT_PUBLIC_FIREBASE_API_KEY", "fake-api-key"),
-    authDomain: getEnv("NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN", "localhost"),
+    apiKey: getEnv(
+      "NEXT_PUBLIC_FIREBASE_API_KEY",
+      "AIzaSyCRlMUJ4D2RYV84u1GrNBOb54fPAvsf30M",
+    ),
+    authDomain: getEnv(
+      "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN",
+      "twenty10-51ec4.firebaseapp.com",
+    ),
     projectId,
   };
 
