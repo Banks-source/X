@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { RequireAuth } from "@/lib/ui/RequireAuth";
 import { toErrorMessage } from "@/lib/errors";
+import { computeAllocationByBucket, computeNetWorthByCategory } from "@/lib/netWorth";
+import { Asset, Holding, subscribeAssets, subscribeHoldings, upsertAsset } from "@/lib/portfolio";
 import { Strategy } from "@/lib/models";
 import { subscribeStrategies } from "@/lib/strategies";
-import { Asset, Holding, subscribeAssets, subscribeHoldings, upsertAsset } from "@/lib/portfolio";
-import { computeAllocationByBucket, computeNetWorthByCategory } from "@/lib/netWorth";
+import { RequireAuth } from "@/lib/ui/RequireAuth";
 
 function formatCurrency(n: number) {
   const v = Number(n) || 0;
@@ -147,7 +147,10 @@ function DashboardInner() {
                 <div className="text-xs font-semibold text-zinc-500">Breakdown</div>
                 <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
                   {Object.entries(nw.breakdown).map(([k, v]) => (
-                    <div key={k} className="flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2">
+                    <div
+                      key={k}
+                      className="flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2"
+                    >
                       <span className="capitalize text-zinc-700">{k}</span>
                       <span className="font-medium">{formatCurrency(v)}</span>
                     </div>
@@ -169,7 +172,9 @@ function DashboardInner() {
                     Unassigned value: {formatCurrency(alloc.unassignedValue)}
                   </div>
                 ) : (
-                  <div className="text-xs text-zinc-500">Unassigned value: {formatCurrency(0)}</div>
+                  <div className="text-xs text-zinc-500">
+                    Unassigned value: {formatCurrency(0)}
+                  </div>
                 )}
               </div>
 
@@ -191,7 +196,15 @@ function DashboardInner() {
                         <td className="py-2 pr-3">{formatPct(r.targetPercent)}</td>
                         <td className="py-2 pr-3">{formatPct(r.currentPercent)}</td>
                         <td className="py-2 pr-3">
-                          <span className={r.driftPercent > 0.5 ? "text-red-700" : r.driftPercent < -0.5 ? "text-emerald-700" : "text-zinc-700"}>
+                          <span
+                            className={
+                              r.driftPercent > 0.5
+                                ? "text-red-700"
+                                : r.driftPercent < -0.5
+                                  ? "text-emerald-700"
+                                  : "text-zinc-700"
+                            }
+                          >
                             {formatPct(r.driftPercent)}
                           </span>
                         </td>

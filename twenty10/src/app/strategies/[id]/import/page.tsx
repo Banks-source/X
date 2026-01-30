@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { RequireAuth } from "@/lib/ui/RequireAuth";
 import { toErrorMessage } from "@/lib/errors";
 import { parseKuberaCsv } from "@/lib/kuberaCsv";
 import { createHolding, createImportRun, upsertAsset } from "@/lib/portfolio";
+import { RequireAuth } from "@/lib/ui/RequireAuth";
 
 function todayISO() {
   const d = new Date();
@@ -95,10 +95,7 @@ function ImportInner() {
   return (
     <div className="min-h-screen bg-zinc-50 p-6 text-zinc-900">
       <div className="mx-auto w-full max-w-4xl">
-        <Link
-          href={`/strategies/${strategyId}`}
-          className="text-sm text-zinc-600 underline"
-        >
+        <Link href={`/strategies/${strategyId}`} className="text-sm text-zinc-600 underline">
           ← Back
         </Link>
         <h1 className="mt-2 text-2xl font-semibold">Import (Kubera CSV)</h1>
