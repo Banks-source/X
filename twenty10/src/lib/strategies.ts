@@ -11,12 +11,16 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { getFirestoreDb, connectToEmulatorsIfNeeded } from "@/lib/firebase/client";
-import { AllocationBucket, Strategy } from "@/lib/models";
+import { getFirestoreDb, connectToEmulatorsIfNeeded, getFirebaseAuth } from "@/lib/firebase/client";
+import { AllocationBucket, Strategy, StrategyType } from "@/lib/models";
 import { DEFAULT_BUCKETS } from "@/lib/defaults";
 
 type StrategyDoc = {
+  ownerUid?: unknown;
   name?: unknown;
+  type?: unknown;
+  goal?: unknown;
+  notes?: unknown;
   description?: unknown;
   buckets?: unknown;
   createdAt?: unknown;
@@ -26,7 +30,11 @@ type StrategyDoc = {
 function toStrategy(id: string, data: StrategyDoc): Strategy {
   return {
     id,
+    ownerUid: typeof data.ownerUid === "string" ? data.ownerUid : undefined,
     name: typeof data.name === "string" ? data.name : "",
+    type: data.type === "SMSF" || data.type === "Personal" ? (data.type as StrategyType) : "Personal",
+    goal: typeof data.goal === "string" ? data.goal : "",
+    notes: typeof data.notes === "string" ? data.notes : "",
     description: typeof data.description === "string" ? data.description : "",
     buckets: Array.isArray(data.buckets) ? (data.buckets as AllocationBucket[]) : [],
     createdAt: data.createdAt,
@@ -36,6 +44,9 @@ function toStrategy(id: string, data: StrategyDoc): Strategy {
 
 export type StrategyInput = {
   name: string;
+  type: StrategyType;
+  goal?: string;
+  notes?: string;
   description?: string;
 };
 
@@ -66,11 +77,24 @@ export function subscribeStrategies(
   );
 }
 
+function requireAuthUid(): string {
+  const auth = getFirebaseAuth();
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error("Not signed in.");
+  return uid;
+}
+
 export async function createStrategy(input: StrategyInput) {
   const col = strategiesCol();
   const now = serverTimestamp();
+  const ownerUid = requireAuthUid();
+
   const docRef = await addDoc(col, {
+    ownerUid,
     name: input.name,
+    type: input.type,
+    goal: input.goal ?? "",
+    notes: input.notes ?? "",
     description: input.description ?? "",
     buckets: DEFAULT_BUCKETS,
     createdAt: now,
@@ -116,8 +140,10 @@ export function subscribeStrategy(
 export async function updateStrategy(id: string, update: StrategyUpdate) {
   connectToEmulatorsIfNeeded();
   const db = getFirestoreDb();
+  const ownerUid = requireAuthUid();
   await updateDoc(doc(db, "strategies", id), {
     ...update,
+    ownerUid,
     updatedAt: serverTimestamp(),
   } as Record<string, unknown>);
 }
