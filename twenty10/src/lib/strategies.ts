@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { getFirestoreDb, connectToEmulatorsIfNeeded } from "@/lib/firebase/client";
 import { AllocationBucket, Strategy } from "@/lib/models";
+import { DEFAULT_BUCKETS } from "@/lib/defaults";
 
 type StrategyDoc = {
   name?: unknown;
@@ -71,7 +72,7 @@ export async function createStrategy(input: StrategyInput) {
   const docRef = await addDoc(col, {
     name: input.name,
     description: input.description ?? "",
-    buckets: [],
+    buckets: DEFAULT_BUCKETS,
     createdAt: now,
     updatedAt: now,
   });
