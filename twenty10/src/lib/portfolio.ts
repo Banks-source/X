@@ -9,11 +9,7 @@ import {
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
-import {
-  connectToEmulatorsIfNeeded,
-  getFirebaseAuth,
-  getFirestoreDb,
-} from "@/lib/firebase/client";
+import { connectToEmulatorsIfNeeded, getFirebaseAuth, getFirestoreDb } from "@/lib/firebase/client";
 
 export type AssetCategory = "property" | "cash" | "brokerage" | "crypto" | "other";
 
@@ -94,9 +90,7 @@ function reportsCol(strategyId: string) {
 
 export async function upsertAsset(
   strategyId: string,
-  input: Omit<Asset, "id" | "strategyId" | "ownerUid" | "createdAt" | "updatedAt"> & {
-    id?: string;
-  },
+  input: Omit<Asset, "id" | "strategyId" | "ownerUid" | "createdAt" | "updatedAt"> & { id?: string },
 ) {
   const ownerUid = requireAuthUid();
   const now = serverTimestamp();
@@ -146,10 +140,7 @@ export async function createHolding(
   return ref.id;
 }
 
-export async function createImportRun(
-  strategyId: string,
-  params: { source: string; rowCount?: number; notes?: string },
-) {
+export async function createImportRun(strategyId: string, params: { source: string; rowCount?: number; notes?: string }) {
   const ownerUid = requireAuthUid();
   const now = serverTimestamp();
   const ref = await addDoc(importRunsCol(strategyId), {
@@ -162,11 +153,7 @@ export async function createImportRun(
   return ref.id;
 }
 
-export function subscribeAssets(
-  strategyId: string,
-  cb: (rows: Asset[]) => void,
-  onError?: (e: unknown) => void,
-) {
+export function subscribeAssets(strategyId: string, cb: (rows: Asset[]) => void, onError?: (e: unknown) => void) {
   const q = query(assetsCol(strategyId), orderBy("updatedAt", "desc"));
   return onSnapshot(
     q,
