@@ -23,6 +23,8 @@ export type Asset = {
   ownerUid?: string;
   name: string;
   category: AssetCategory;
+  // Manual mapping of assets to strategy allocation buckets.
+  bucketId?: string;
   notes?: string;
   createdAt?: unknown;
   updatedAt?: unknown;
@@ -106,6 +108,7 @@ export async function upsertAsset(
         ownerUid,
         name: input.name,
         category: input.category,
+        bucketId: input.bucketId ?? "",
         notes: input.notes ?? "",
         updatedAt: now,
       },
@@ -118,6 +121,7 @@ export async function upsertAsset(
     ownerUid,
     name: input.name,
     category: input.category,
+    bucketId: input.bucketId ?? "",
     notes: input.notes ?? "",
     createdAt: now,
     updatedAt: now,
@@ -171,7 +175,7 @@ export function subscribeAssets(
         snap.docs.map((d) => ({
           id: d.id,
           strategyId,
-          ...(d.data() as any),
+          ...((d.data() as unknown) as Omit<Asset, "id" | "strategyId">),
         })) as Asset[],
       );
     },
@@ -192,7 +196,7 @@ export function subscribeHoldings(
         snap.docs.map((d) => ({
           id: d.id,
           strategyId,
-          ...(d.data() as any),
+          ...((d.data() as unknown) as Omit<Holding, "id" | "strategyId">),
         })) as Holding[],
       );
     },
@@ -227,7 +231,7 @@ export function subscribeWeeklyReports(
         snap.docs.map((d) => ({
           id: d.id,
           strategyId,
-          ...(d.data() as any),
+          ...((d.data() as unknown) as Omit<WeeklyReport, "id" | "strategyId">),
         })) as WeeklyReport[],
       );
     },
@@ -237,10 +241,18 @@ export function subscribeWeeklyReports(
 
 export async function listAssets(strategyId: string): Promise<Asset[]> {
   const snap = await getDocs(assetsCol(strategyId));
-  return snap.docs.map((d) => ({ id: d.id, strategyId, ...(d.data() as any) })) as Asset[];
+  return snap.docs.map((d) => ({
+    id: d.id,
+    strategyId,
+    ...((d.data() as unknown) as Omit<Asset, "id" | "strategyId">),
+  })) as Asset[];
 }
 
 export async function listHoldings(strategyId: string): Promise<Holding[]> {
   const snap = await getDocs(holdingsCol(strategyId));
-  return snap.docs.map((d) => ({ id: d.id, strategyId, ...(d.data() as any) })) as Holding[];
+  return snap.docs.map((d) => ({
+    id: d.id,
+    strategyId,
+    ...((d.data() as unknown) as Omit<Holding, "id" | "strategyId">),
+  })) as Holding[];
 }
