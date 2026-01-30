@@ -11,7 +11,7 @@ import {
   deleteStrategy,
   subscribeStrategies,
 } from "@/lib/strategies";
-import { Strategy } from "@/lib/models";
+import { Strategy, StrategyType } from "@/lib/models";
 
 export default function StrategiesPage() {
   return (
@@ -26,6 +26,9 @@ function StrategiesInner() {
   const [rows, setRows] = useState<Strategy[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState("My Strategy");
+  const [type, setType] = useState<StrategyType>("Personal");
+  const [goal, setGoal] = useState("");
+  const [notes, setNotes] = useState("");
   const [desc, setDesc] = useState("");
   const [creating, setCreating] = useState(false);
 
@@ -37,8 +40,11 @@ function StrategiesInner() {
     setError(null);
     setCreating(true);
     try {
-      const id = await createStrategy({ name, description: desc });
+      const id = await createStrategy({ name, type, goal, notes, description: desc });
       setName("My Strategy");
+      setType("Personal");
+      setGoal("");
+      setNotes("");
       setDesc("");
       // Navigate to the editor.
       window.location.href = `/strategies/${id}`;
@@ -91,8 +97,28 @@ function StrategiesInner() {
               onChange={(e) => setName(e.target.value)}
               placeholder="Name"
             />
+            <select
+              className="rounded-lg border border-zinc-200 px-3 py-2 text-sm"
+              value={type}
+              onChange={(e) => setType(e.target.value as StrategyType)}
+            >
+              <option value="Personal">Personal</option>
+              <option value="SMSF">SMSF</option>
+            </select>
             <input
-              className="rounded-lg border border-zinc-200 px-3 py-2 text-sm sm:col-span-2"
+              className="rounded-lg border border-zinc-200 px-3 py-2 text-sm"
+              value={goal}
+              onChange={(e) => setGoal(e.target.value)}
+              placeholder='Goal (e.g. "10M / 20y")'
+            />
+            <input
+              className="rounded-lg border border-zinc-200 px-3 py-2 text-sm sm:col-span-3"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Notes (optional)"
+            />
+            <input
+              className="rounded-lg border border-zinc-200 px-3 py-2 text-sm sm:col-span-3"
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
               placeholder="Description (optional)"
@@ -121,6 +147,10 @@ function StrategiesInner() {
                 <div key={s.id} className="flex items-center justify-between gap-4 p-4">
                   <div className="min-w-0">
                     <div className="truncate font-medium">{s.name}</div>
+                    <div className="mt-1 text-xs text-zinc-500">Type: {s.type}</div>
+                    {s.goal ? (
+                      <div className="truncate text-xs text-zinc-500">Goal: {s.goal}</div>
+                    ) : null}
                     {s.description ? (
                       <div className="truncate text-sm text-zinc-600">{s.description}</div>
                     ) : null}

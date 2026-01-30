@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { RequireAuth } from "@/lib/ui/RequireAuth";
 import { toErrorMessage } from "@/lib/errors";
-import { AllocationBucket, validateBuckets } from "@/lib/models";
+import { AllocationBucket, StrategyType, validateBuckets } from "@/lib/models";
 import { subscribeStrategy, updateStrategy } from "@/lib/strategies";
 
 function newBucket(): AllocationBucket {
@@ -33,6 +33,9 @@ function StrategyDetailInner() {
   const [error, setError] = useState<string | null>(null);
 
   const [name, setName] = useState("");
+  const [type, setType] = useState<StrategyType>("Personal");
+  const [goal, setGoal] = useState("");
+  const [notes, setNotes] = useState("");
   const [description, setDescription] = useState("");
   const [buckets, setBuckets] = useState<AllocationBucket[]>([]);
 
@@ -47,6 +50,9 @@ function StrategyDetailInner() {
         setMissing(!row);
         if (!row) return;
         setName(row.name);
+        setType(row.type);
+        setGoal(row.goal ?? "");
+        setNotes(row.notes ?? "");
         setDescription(row.description ?? "");
         setBuckets(row.buckets ?? []);
       },
@@ -68,6 +74,9 @@ function StrategyDetailInner() {
 
       await updateStrategy(id, {
         name: name.trim(),
+        type,
+        goal,
+        notes,
         description,
         buckets,
       });
@@ -148,12 +157,42 @@ function StrategyDetailInner() {
               />
             </div>
             <div>
+              <label className="block text-sm font-medium">Type</label>
+              <select
+                className="mt-1 w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm"
+                value={type}
+                onChange={(e) => setType(e.target.value as StrategyType)}
+              >
+                <option value="Personal">Personal</option>
+                <option value="SMSF">SMSF</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium">Goal</label>
+              <input
+                className="mt-1 w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm"
+                value={goal}
+                onChange={(e) => setGoal(e.target.value)}
+                placeholder='e.g. "10M / 20y"'
+              />
+            </div>
+            <div>
               <label className="block text-sm font-medium">Description</label>
               <input
                 className="mt-1 w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Optional"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium">Notes</label>
+              <textarea
+                className="mt-1 w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Optional"
+                rows={4}
               />
             </div>
           </div>

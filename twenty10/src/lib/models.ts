@@ -4,9 +4,15 @@ export type AllocationBucket = {
   percent: number; // 0..100
 };
 
+export type StrategyType = "SMSF" | "Personal";
+
 export type Strategy = {
   id: string;
+  ownerUid?: string;
   name: string;
+  type: StrategyType;
+  goal?: string; // e.g., "10M / 20y"
+  notes?: string;
   description?: string;
   buckets: AllocationBucket[];
   createdAt?: unknown;
