@@ -13,7 +13,7 @@ import {
 } from "firebase/firestore";
 import { getFirestoreDb, connectToEmulatorsIfNeeded, getFirebaseAuth } from "@/lib/firebase/client";
 import { AllocationBucket, Strategy, StrategyType } from "@/lib/models";
-import { DEFAULT_BUCKETS } from "@/lib/defaults";
+import { defaultBuckets } from "@/lib/defaults";
 
 type StrategyDoc = {
   ownerUid?: unknown;
@@ -96,7 +96,7 @@ export async function createStrategy(input: StrategyInput) {
     goal: input.goal ?? "",
     notes: input.notes ?? "",
     description: input.description ?? "",
-    buckets: DEFAULT_BUCKETS,
+    buckets: defaultBuckets(),
     createdAt: now,
     updatedAt: now,
   });
