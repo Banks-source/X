@@ -1,0 +1,9 @@
+env:
+  - variable: NEXT_PUBLIC_USE_FIREBASE_EMULATOR
+    value: "0"
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: "twenty10-51ec4"
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: "twenty10-51ec4.firebaseapp.com"
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: "AIzaSyCRlMUJ4D2RYV84u1GrNBOb54fPAvsf30M"
